@@ -1,64 +1,57 @@
-import puppeteer, { Browser } from "puppeteer";
-import type { Section, PdfOptions } from "../types";
+import puppeteer, { Browser, type PDFOptions } from "puppeteer";
+import type { PdfRequest } from "../types";
 import { generateHtml } from "../templates/document.template";
 
 class PuppeteerService {
-  private browser: Browser | null = null;
-
-  /**
-   * פונקציה פרטית להבטיח שהדפדפן נפתח עם הגדרות נכונות
-   */
-  private async getBrowser() {
-    // בשרתים מומלץ להשתמש ב-No-Sandbox
+  private async getBrowser(): Promise<Browser> {
     return await puppeteer.launch({
       headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
-        "--font-render-hinting=none", // לשיפור רינדור פונטים בעברית
+        "--disable-dev-shm-usage", // Prevent memory leaking in Docker
+        "--font-render-hinting=none",
       ],
     });
   }
 
-  public async generatePdf(
-    sections: Section[],
-    options: PdfOptions,
-  ): Promise<Buffer> {
+  public async generatePdf(data: PdfRequest): Promise<Buffer> {
     const browser = await this.getBrowser();
 
     try {
       const page = await browser.newPage();
+      const finalHtml = generateHtml({ html: data.html, css: data.css });
 
-      // הכנת ה-HTML
-      const html = generateHtml(sections, options);
-
-      // הגדרת תוכן והמתנה לטעינה מלאה (כולל פונטים ותמונות)
-      await page.setContent(html, {
+      await page.setContent(finalHtml, {
         waitUntil: "networkidle0",
-        timeout: 30000,
+        timeout: 60000,
       });
 
-      // יצירת ה-PDF
-      const pdfBuffer = await page.pdf({
+      const defaultPdfOptions: PDFOptions = {
         format: "A4",
         printBackground: true,
         displayHeaderFooter: true,
         headerTemplate: "<div></div>",
-        footerTemplate: `
-          <div style="font-size: 10px; width: 100%; text-align: center; direction: rtl; font-family: sans-serif; padding-bottom: 10px;">
-            עמוד <span class="pageNumber"></span> מתוך <span class="totalPages"></span>
-          </div>`,
+        footerTemplate: `<div></div>`,
         margin: {
-          top: "60px",
-          bottom: "60px",
-          right: "40px",
-          left: "40px",
+          top: "20mm",
+          bottom: "20mm",
+          right: "15mm",
+          left: "15mm",
         },
-      });
+      };
 
+      const finalPdfOptions: PDFOptions = {
+        ...defaultPdfOptions,
+        ...(data.pdfOptions || {}),
+      };
+
+      const pdfBuffer = await page.pdf(finalPdfOptions);
+
+      console.error("✅ Finished generating PDF successfully!");
       return Buffer.from(pdfBuffer);
     } catch (error) {
-      console.error("Error during PDF generation:", error);
+      console.error("❌ Error during PDF generation:", error);
       throw error;
     } finally {
       await browser.close();
@@ -66,5 +59,4 @@ class PuppeteerService {
   }
 }
 
-// ייצוא Instance יחיד (Singleton pattern)
 export const puppeteerService = new PuppeteerService();

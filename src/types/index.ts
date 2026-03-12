@@ -1,13 +1,14 @@
-export interface Section {
-  id: string;
-  html_content: string;
-  title?: string;
-  order: number;
-}
+import type { PDFOptions } from "puppeteer";
 
-export interface PdfOptions {
-  title: string;
-  splitPages: boolean;
-  logoUrl?: string;
-  logoBuffer?: Buffer | Uint8Array;
+export interface PdfRequest {
+  html: string;
+  css?: string;
+  pdfOptions?: {
+    format?: PDFOptions['format'];
+    landscape?: boolean;
+    margin?: PDFOptions['margin'];
+    displayHeaderFooter?: boolean;
+    headerTemplate?: string;
+    footerTemplate?: string;
+  };
 }
