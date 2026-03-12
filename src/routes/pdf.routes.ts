@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { puppeteerService } from "../services/puppeteer.service";
+import { puppeteerService } from "../services/puppeteer.service.js";
 import type { PdfRequest } from "../types";
 
 const pdfRoutes = new Hono();

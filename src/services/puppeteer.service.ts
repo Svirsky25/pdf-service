@@ -1,22 +1,16 @@
 import puppeteer, { Browser, type PDFOptions } from "puppeteer";
 import type { PdfRequest } from "../types";
-import { generateHtml } from "../templates/document.template";
+import { generateHtml } from "../templates/document.template.js";
 
 class PuppeteerService {
-  private async getBrowser(): Promise<Browser> {
-    return await puppeteer.launch({
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage", // Prevent memory leaking in Docker
-        "--font-render-hinting=none",
-      ],
-    });
-  }
-
   public async generatePdf(data: PdfRequest): Promise<Buffer> {
-    const browser = await this.getBrowser();
+    const browser = await puppeteer.launch({
+      args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage' // חשוב מאוד בתוך Docker למניעת קריסות זיכרון
+      ]
+    });
 
     try {
       const page = await browser.newPage();

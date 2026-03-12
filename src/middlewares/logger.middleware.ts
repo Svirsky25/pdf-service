@@ -1,5 +1,5 @@
 import type { MiddlewareHandler } from 'hono';
-import { logger } from '../logs/logger';
+import { logger } from '../logs/logger.js';
 
 export const loggerMiddleware: MiddlewareHandler = async (c, next) => {
   const start = Date.now();
