@@ -10,7 +10,6 @@
   "dependencies": {
     "@hono/node-server": "^1.19.11",
     "hono": "^4.12.7",
-    "node-html-parser": "^7.1.0",
     "puppeteer": "^24.39.0"
   },
   "devDependencies": {
