@@ -21,6 +21,9 @@ class PuppeteerService {
           waitUntil: "networkidle0",
           timeout: 60000,
         });
+
+        await page.evaluateHandle('document.fonts.ready');
+        
       } catch (contentError: any) {
         throw new Error(`Content Loading Error: ${contentError.message}. This often happens due to broken external links or images.`);
       }
