@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { requestId } from "hono/request-id";
 import { readFile } from "node:fs/promises";
 import { loggerMiddleware } from "./middlewares/logger.middleware.js";
-import { pdfRoutes } from "./routes/pdf.routes";
+import pdfRouter from "./routes/pdf.routes.js";
 
 type Env = {
   Variables: {
@@ -40,7 +40,7 @@ app.get('/tutman', async (c) => {
   return c.body(image, 200, { 'Content-Type': 'image/png'})
 })
 
-app.route("/api/pdf", pdfRoutes);
+app.route("/api/pdf", pdfRouter);
 
 
 

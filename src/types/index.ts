@@ -1,7 +1,6 @@
 import type { PDFOptions } from "puppeteer";
 
 export interface PdfRequest {
-  html: string;
-  css?: string;
+  html: string
   pdfOptions?: PDFOptions
 }
