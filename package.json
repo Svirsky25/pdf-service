@@ -16,5 +16,11 @@
     "@types/node": "^20.11.17",
     "tsx": "^4.7.1",
     "typescript": "^5.8.3"
-  }
+  },
+  "description": "A robust microservice for generating professional, print-ready PDF documents from dynamic HTML content (TinyMCE/WYSIWYG). Built with **Node.js 22**, **Hono**, and **Puppeteer**.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
